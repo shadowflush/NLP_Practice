@@ -6,8 +6,8 @@ def contentExtract(sourceFile,sourceFileFormat,outcomeFile):
 		with open(outcomeFile, mode='w', encoding="utf-8") as output:
 			lines =input.readlines()
 			for line in lines:
-				content =re.sub("<.*?>","",line)#提取内容
-				content =re.sub("[\\t\\r\\n ]","",content)#去除空格 TAB 换行
+				content =re.sub("<.*?>","",line)#正则非贪婪替换 <>及其中的内容，保留正文
+				content =re.sub("[\\t\\r\\n ]","",content)#正文去除空格 TAB 换行
 				if content:
 					output.write(content+"\n")
 
