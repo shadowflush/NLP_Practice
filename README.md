@@ -18,8 +18,11 @@ contentExtract:（简单本地网页内容抽取）
 	  
 Ngram:（三元语言模型 coding）
  
-	  （解决问题中...目前想法：将所有未出现的N元组作为一个整体考虑）
+	  '''（解决问题中...目前想法：将所有未出现的N元组作为一个整体考虑）'''
 	  19.9.15更新：
 		生成的outcome文件：最后一个值为3元组的概率值
-		
+	  19.9.22更新（解决perplexity值异常问题）:
+		三元组生成：python 3_gram.py
+		perplexity计算: python perplexity.py
+		句子生成：python genSentences.py
 	  
