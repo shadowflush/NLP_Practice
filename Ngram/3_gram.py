@@ -47,7 +47,6 @@ def genModel_GT(trainData,dict,outcomeFile,N,threshold):#统计结果转化为�
 	
 	flag =defaultdict(int)#记录已经计算过的N元组，避免重复计算
 	with open(outcomeFile, mode='w', encoding="utf-8") as output:#计算概率，保存
-		
 		for i in range(len(trainData)):#计算在训练集中出现过的N元组
 			if trainData[i] =='*':
 				continue
@@ -62,14 +61,15 @@ def genModel_GT(trainData,dict,outcomeFile,N,threshold):#统计结果转化为�
 					output.write(i+' ')
 				output.write(' '+str(P)+"\n")
 		setWords =set(trainData)#训练集词去重
-		P = ( countC[1]/(len(setWords)**3-N_all) ) /N_all#平滑处理 在训练集中未出现的N元组
-		output.write("- - -"+' '+str(P))		
+		P = ( countC[1]/((len(setWords) -1)**3-N_all) ) /N_all#平滑处理 在训练集中未出现的N元组
+		output.write("- - -"+' '+str(P))
+		
 START ='*'
 STOP =["？","。","！"]
 def main():
 	sentences =loadTrainData("train.conll",3)#载入训练数据
 	dict =countNgram(sentences,3)#获取统计结果
-	genModel_GT(sentences,dict,"outcome",3,1)#统计结果转化为概率（平滑处理），保存
+	genModel_GT(sentences,dict,"outcome",3,10)#统计结果转化为概率（平滑处理），保存
 	
 main()
 
