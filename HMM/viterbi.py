@@ -1,5 +1,7 @@
 from collections import defaultdict,Counter
 
+constant =100
+
 def viterbi(S,emission,transfer):
 	outcome =[]
 	score,backpointer=[],[]
@@ -8,7 +10,9 @@ def viterbi(S,emission,transfer):
 	
 	vtb,bp ={},{}
 	for i in tags:#first
-		vtb[i] =emission['*'][i]*transfer[i][S[0]]
+		e =emission['*'][i] if emission['*'][i] >0 else emission['*']['_']
+		t =transfer[i][S[0]] if transfer[i][S[0]] >0 else transfer[i]['_']
+		vtb[i] =e*t
 		bp[i] ='*'
 	score.append(vtb)
 	backpointer.append(bp)
@@ -16,29 +20,51 @@ def viterbi(S,emission,transfer):
 	for i in range(1,len(S)):
 		vtb,bp ={},{}
 		pre_vtb =score[-1]
-		
+		'''Max ,bestPreTag =0,'*'
+		for key in pre_vtb.keys():#找到前一个词的最大概率词性，备用防止此次判断全为0的情况
+			if pre_vtb[key] >Max:
+				Max =pre_vtb[key]
+				bestPreTag =key'''
 		for tag in tags:
-			Max =0
-			bestPreTag ='_'
+			Max ,bestPreTag =0,'_'
 			for key in pre_vtb.keys():
-				if pre_vtb[key]*emission[key][tag]*transfer[tag][S[i]] > Max:
+				e =emission[key][tag] if emission[key][tag] >0 else emission[key]['_']
+				t =transfer[tag][S[i]] if transfer[tag][S[i]] >0 else transfer[tag]['_']
+				'''tmpTag,tmpWord =tag,S[i]
+				if tag not in emission[key]:
+					tmpTag ='_'
+				if S[i] not in transfer[tag]:
+					tmpWord ='_'''
+				if pre_vtb[key]*e*t*constant > Max:#乘常数避免因为精度问题导致出错
 					bestPreTag =key
-			vtb[tag] =pre_vtb[bestPreTag]*emission[bestPreTag][tag]*transfer[tag][S[i]]
+					Max =pre_vtb[key]*e*t*constant
+			'''if bestPreTag =='_':
+				vtb[tag]=emission['*'][tag]*transfer[tag][S[i]]
+				bp[tag] ='—'
+			else:'''
+			vtb[tag] =Max
 			bp[tag] =bestPreTag
 		score.append(vtb)
 		backpointer.append(bp)
 	
-	Max =0
-	bestPreTag ='_'
+	'''结束'''
+	'''Max ,bestPreTag =0,'*'
+	for key in score[-1].keys():
+		if score[-1][key] >Max:
+			Max =score[-1][key]
+			bestPreTag =key'''
+	Max ,bestPreTag =0,'_'
 	for key in score[-1].keys():
 		if score[-1][key]*emission[key]['$'] > Max:
 			bestPreTag =key 
+			Max =score[-1][key]*emission[key]['$']
 	outcome.append(bestPreTag)
 	
 	backpointer.reverse()
 	for bp in backpointer:
 		outcome.append(bp[outcome[-1]])
-	return outcome
+	outcome.reverse()
+	return outcome[1:]
 
 def loadModel(FilePath):
 	dict =defaultdict(Counter)
@@ -67,7 +93,7 @@ def loadData(sourceFile):#载入数据
 		for line in lines:
 			line =getInformation(line)
 			if not line:
-				sentences.append(outcome)
+				sentences.append(outcome[:])
 				outcome.clear()
 			else:
 				outcome.append(line)
@@ -79,14 +105,12 @@ def tag(sourceFile,emissionModelFile,transferModelFile,outcome):
 	emissionDict =loadModel(emissionModelFile)
 	transferDict =loadModel(transferModelFile)
 	
-	for i in sentences:
-		tags.append(viterbi(i,emissionDict,transferDict))
-	
 	with open(outcome,mode='w',encoding ="utf-8") as output:
-		for sentence,tag in sentences,tags:
-			for i,j in sentence,tag:
-				output.write(i+' '+j+'\n')
-
+		for i in sentences:
+			tag =viterbi(i,emissionDict,transferDict)
+			for j in range(len(i)):
+				output.write(i[j]+' '+tag[j]+' \n')
+	
 tag("dev.conll","emission","transfer","tags")
 	
 	

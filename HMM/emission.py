@@ -40,17 +40,15 @@ def count2tuple(trainData):#统计2元模型
 	
 def smoothAndSave(modeDict, outcomeFile):#平滑统计结果，保存至文件
 	
-	V =[]#统计不同词性
-	for i in modeDict:
-		V.append(i)
-	setV =set(V)
-	
-	all =len(setV)
+	all =len(modeDict.keys())
 	with open(outcomeFile,mode='w',encoding="utf-8") as output:
 		for i in modeDict:
 			for j in modeDict[i]:
 				p =(modeDict[i][j] + alpha) / ( sum(modeDict[i].values()) + alpha*all)
 				output.write(i+' '+j+' '+str(p)+'\n')
+			'''未出现的情况'''
+			p = alpha / ( sum(modeDict[i].values()) + alpha*all)
+			output.write(i+' '+'_ '+str(p)+'\n')
 
 def emission(trainFile,outcomeFile):
 	trainData =loadTrainData(trainFile)

@@ -11,11 +11,16 @@ def loadTrainData(trainFile):
 	return dict
 
 def toPAndSave(trainDict,outcomeFile):#计算转移概率，保存
+	all =0
+	for i in trainDict:
+		all +=len(trainDict[i].keys())
 	with open(outcomeFile,mode='w',encoding ="utf-8") as output:
 		for i in trainDict:
 			for j in trainDict[i]:
-				p =trainDict[i][j] /sum(trainDict[i].values())
+				p =(trainDict[i][j]+1) /(sum(trainDict[i].values()) +all)
 				output.write(i+' '+j+' '+str(p)+'\n')
+			p =1/(sum(trainDict[i].values()) +all)
+			output.write(i+' '+'_ '+str(p)+'\n')
 
 def transfer(trainData,outcome):
 	dict =loadTrainData(trainData)
