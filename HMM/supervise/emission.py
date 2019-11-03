@@ -52,8 +52,12 @@ def smoothAndSave(modeDict, outcomeFile):#平滑统计结果，保存至文件
 
 def emission(trainFile,outcomeFile):
 	trainData =loadTrainData(trainFile)
+	'''trainData =set(trainData)
+	with open(outcomeFile,mode='w',encoding="utf-8") as output:
+		for i in trainData:
+			output.write(i+' ')'''
 	trainDict =count2tuple(trainData)
 	smoothAndSave(trainDict,outcomeFile)
 
-emission("train.conll","emission")
+emission("train.conll","")
 		

@@ -111,6 +111,6 @@ def tag(sourceFile,emissionModelFile,transferModelFile,outcome):
 			for j in range(len(i)):
 				output.write(i[j]+' '+tag[j]+' \n')
 	
-tag("dev.conll","emission","transfer","tags")
+#tag("dev.conll","emission","transfer","tags")
 	
 	
